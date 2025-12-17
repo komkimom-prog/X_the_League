@@ -56,7 +56,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 20px 20px 40px;
+            padding: 10px 20px 20px;
             background: #fafafa;
             overflow: hidden;
         }
@@ -75,7 +75,7 @@
         .global-sellers-label {
             font-size: 11px;
             letter-spacing: 3px;
-            margin: 20px 0;
+            margin: 10px 0 10px;
             padding: 6px 20px;
             border: 2px solid #ff0000;
             color: #ff0000;
@@ -90,8 +90,8 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 600px;
-            padding: 20px;
+            min-height: 550px;
+            padding: 10px;
         }
         
         .main-title {
@@ -333,8 +333,8 @@
             }
             
             .globe-container {
-                min-height: 500px;
-                padding: 10px;
+                min-height: 420px;
+                padding: 5px;
             }
             
             .main-title {
@@ -346,7 +346,12 @@
             }
             
             .hero-section {
-                padding: 10px 10px 30px;
+                padding: 5px 10px 15px;
+                min-height: auto;
+            }
+            
+            .global-sellers-label {
+                margin: 5px 0;
             }
         }
         
@@ -361,7 +366,18 @@
             }
             
             .globe-container {
-                min-height: 450px;
+                min-height: 380px;
+                padding: 0;
+            }
+            
+            .hero-section {
+                padding: 5px 5px 10px;
+            }
+            
+            .global-sellers-label {
+                margin: 5px 0;
+                padding: 5px 15px;
+                font-size: 10px;
             }
         }
     </style>
@@ -483,7 +499,10 @@
 
     <!-- Footer Section (배경: Startline.png) -->
     <section class="footer-section">
-        <button class="join-button">JOIN THE RACE</button>
+        <!-- JOIN THE RACE 버튼 이미지 -->
+        <a href="https://docs.google.com/forms/d/1VF_Kv1A5tB-TGH79vO4MH-vi6NIwu49xooHQ_EJRDko/edit" target="_blank" style="display: inline-block; margin-bottom: 50px; transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+            <img src="join.png" alt="Join The Race" style="max-width: 400px; width: 80%; height: auto; cursor: pointer;">
+        </a>
         
         <h2 class="footer-title">
             SELLER<br/>RACE
@@ -499,13 +518,13 @@
 
     <!-- Three.js Globe Script -->
     <script>
-        // 9개국 데이터
+        // 9개국 데이터 - 위치 조정
         const countries = [
             { name: 'China', city: 'SHANGHAI', angle: 0 },
             { name: 'Singapore', city: 'SINGAPORE', angle: 40 },
-            { name: 'Japan', city: 'TOKYO', angle: 80 },
-            { name: 'Malaysia', city: 'KUALA LUMPUR', angle: 120 },
+            { name: 'Japan', city: 'TOKYO', angle: 50 }, // 싱가포르 아래로 이동
             { name: 'Thailand', city: 'BANGKOK', angle: 160 },
+            { name: 'Malaysia', city: 'KUALA LUMPUR', angle: 170 }, // 방콕 아래로 이동
             { name: 'Indonesia', city: 'JAKARTA', angle: 200 },
             { name: 'Vietnam', city: 'HO CHI MINH', angle: 240 },
             { name: 'Korea', city: 'SEOUL', angle: 280 },
