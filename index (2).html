@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>X the League - World Seller Race 2026</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto+Condensed:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <!-- Three.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Bebas Neue', sans-serif;
+            background: #fafafa;
+            color: #000;
+            overflow-x: hidden;
+        }
+        
+        /* Checkered Border Pattern */
+        .checkered-border {
+            background-image: 
+                linear-gradient(45deg, #000 25%, transparent 25%),
+                linear-gradient(-45deg, #000 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #000 75%),
+                linear-gradient(-45deg, transparent 75%, #000 75%);
+            background-size: 30px 30px;
+            background-position: 0 0, 0 15px, 15px -15px, -15px 0px;
+            background-color: #fff;
+            padding: 8px 0;
+        }
+        
+        .header-content {
+            background: #ff0000;
+            padding: 25px 20px;
+            text-align: center;
+            font-size: clamp(36px, 5vw, 52px);
+            font-weight: 700;
+            letter-spacing: 6px;
+            color: #fff;
+        }
+        
+        /* Hero Section */
+        .hero-section {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 20px 40px;
+            background: #fafafa;
+            overflow: hidden;
+        }
+        
+        .red-stripe {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #ff0000;
+        }
+        
+        .red-stripe.top { top: 0; }
+        .red-stripe.bottom { bottom: 0; }
+        
+        .global-sellers-label {
+            font-size: 11px;
+            letter-spacing: 3px;
+            margin: 20px 0;
+            padding: 6px 20px;
+            border: 2px solid #ff0000;
+            color: #ff0000;
+            font-weight: 700;
+        }
+        
+        .globe-container {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 600px;
+            padding: 20px;
+        }
+        
+        .main-title {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: clamp(60px, 12vw, 180px);
+            font-weight: 700;
+            text-align: center;
+            color: #ff0000;
+            text-transform: uppercase;
+            z-index: 2;
+            pointer-events: none;
+            font-style: italic;
+            line-height: 0.85;
+            letter-spacing: -3px;
+        }
+        
+        #globeCanvas {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .cities-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 3;
+            overflow: visible;
+        }
+        
+        .floating-city {
+            position: absolute;
+            text-align: center;
+            white-space: nowrap;
+            animation: float 4s ease-in-out infinite, fadeIn 0.8s ease-out forwards;
+            opacity: 0;
+        }
+        
+        .city-name {
+            font-size: clamp(18px, 2vw, 24px);
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            color: #ff0000;
+            text-shadow: 2px 2px 4px rgba(255,255,255,0.9);
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+        }
+        
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+        
+        /* Requirements Section */
+        .red-section {
+            background: #ff0000;
+            padding: 60px 20px;
+            text-align: center;
+            color: #fff;
+        }
+        
+        .section-title {
+            font-size: clamp(36px, 7vw, 64px);
+            font-weight: 700;
+            letter-spacing: 3px;
+            margin-bottom: 20px;
+        }
+        
+        .section-text {
+            font-size: clamp(16px, 2.5vw, 20px);
+            font-family: 'Roboto Condensed', sans-serif;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.7;
+            font-weight: 400;
+        }
+        
+        /* Sellers Grid */
+        .sellers-section {
+            padding: 60px 20px;
+            background: #fafafa;
+        }
+        
+        .sellers-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .seller-card {
+            position: relative;
+            aspect-ratio: 3/4;
+            overflow: hidden;
+            cursor: pointer;
+            background: #fff;
+            border: 4px solid #000;
+            transition: border-color 0.3s ease;
+        }
+        
+        .seller-card:hover {
+            border-color: #ff0000;
+        }
+        
+        .seller-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(100%);
+            transition: filter 0.5s ease, transform 0.5s ease;
+        }
+        
+        .seller-card:hover img {
+            filter: grayscale(0%);
+            transform: scale(1.08);
+        }
+        
+        /* Prize Section */
+        .prize-section {
+            background: #ff0000;
+            padding: 60px 20px;
+            text-align: center;
+            color: #fff;
+            position: relative;
+        }
+        
+        .prize-title {
+            font-size: clamp(48px, 10vw, 96px);
+            font-weight: 700;
+            letter-spacing: 5px;
+            margin-bottom: 15px;
+        }
+        
+        .prize-text {
+            font-size: clamp(18px, 3.5vw, 24px);
+            font-family: 'Roboto Condensed', sans-serif;
+            font-weight: 400;
+        }
+        
+        .white-stripe {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #fff;
+            opacity: 0.3;
+        }
+        
+        .white-stripe.top { top: 0; }
+        .white-stripe.bottom { bottom: 0; }
+        
+        /* CTA Section with Background Image */
+        .cta-section {
+            /* 배경 이미지: sellerrace.png */
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.6)), url('sellerrace.png') center/cover;
+            min-height: 60vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+            text-align: center;
+        }
+        
+        .cta-title {
+            font-size: clamp(40px, 8vw, 80px);
+            font-weight: 700;
+            letter-spacing: 2px;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            color: #fff;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
+        }
+        
+        .cta-text {
+            font-size: clamp(16px, 3vw, 20px);
+            font-family: 'Roboto Condensed', sans-serif;
+            color: #fff;
+            max-width: 600px;
+        }
+        
+        /* Footer Section with Background Image */
+        .footer-section {
+            /* 배경 이미지: Startline.png */
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url('Startline.png') center/cover;
+            padding: 80px 20px;
+            text-align: center;
+        }
+        
+        .join-button {
+            background: #ff0000;
+            color: #fff;
+            border: none;
+            padding: 16px 45px;
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            cursor: pointer;
+            border-radius: 50px;
+            margin-bottom: 50px;
+            transition: transform 0.3s ease;
+            box-shadow: 0 8px 25px rgba(255, 0, 0, 0.5);
+            font-family: 'Bebas Neue', sans-serif;
+        }
+        
+        .join-button:hover {
+            transform: scale(1.05);
+        }
+        
+        .footer-title {
+            font-size: clamp(60px, 10vw, 110px);
+            font-weight: 700;
+            letter-spacing: 6px;
+            margin-bottom: 25px;
+            color: #fff;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.8);
+            font-style: italic;
+            line-height: 0.85;
+        }
+        
+        .footer-subtitle {
+            font-size: clamp(20px, 4vw, 28px);
+            font-family: 'Roboto Condensed', sans-serif;
+            font-weight: 300;
+            letter-spacing: 4px;
+            color: #fff;
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .sellers-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .globe-container {
+                min-height: 500px;
+                padding: 10px;
+            }
+            
+            .main-title {
+                font-size: clamp(50px, 10vw, 100px);
+            }
+            
+            .city-name {
+                font-size: clamp(16px, 3vw, 20px) !important;
+            }
+            
+            .hero-section {
+                padding: 10px 10px 30px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .main-title {
+                font-size: clamp(40px, 9vw, 80px);
+            }
+            
+            .city-name {
+                font-size: 14px !important;
+                letter-spacing: 1px !important;
+            }
+            
+            .globe-container {
+                min-height: 450px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header with Checkered Flag -->
+    <div class="checkered-border">
+        <div class="header-content">
+            WORLD SELLER RACE 2026
+        </div>
+    </div>
+
+    <!-- Hero Section with 3D Globe -->
+    <section class="hero-section">
+        <div class="red-stripe top"></div>
+        
+        <div class="global-sellers-label">
+            GLOBAL SELLERS
+        </div>
+        
+        <div class="globe-container">
+            <!-- Main Title overlays the globe -->
+            <h1 class="main-title">
+                STEP<br/>INTO<br/>THE<br/>ARENA
+            </h1>
+            
+            <!-- 3D Globe Canvas -->
+            <div id="globeCanvas"></div>
+            
+            <!-- Floating Cities -->
+            <div class="cities-container" id="citiesContainer"></div>
+        </div>
+        
+        <div class="red-stripe bottom"></div>
+    </section>
+
+    <!-- Requirements Section -->
+    <section class="red-section">
+        <h2 class="section-title">
+            5 MONTHS. 1 STAGE. 1 CHAMPION.
+        </h2>
+        <p class="section-text">
+            Must: 50K+ followers<br/>
+            and unshakeable confidence in your selling power.
+        </p>
+    </section>
+
+    <!-- Sellers Grid Section -->
+    <section class="sellers-section">
+        <div class="sellers-grid">
+            <!-- 이미지 파일명: china.png -->
+            <div class="seller-card">
+                <img src="china.png" alt="China">
+            </div>
+            
+            <!-- 이미지 파일명: singa.png -->
+            <div class="seller-card">
+                <img src="singa.png" alt="Singapore">
+            </div>
+            
+            <!-- 이미지 파일명: Japan.png -->
+            <div class="seller-card">
+                <img src="Japan.png" alt="Japan">
+            </div>
+            
+            <!-- 이미지 파일명: mal.png -->
+            <div class="seller-card">
+                <img src="mal.png" alt="Malaysia">
+            </div>
+            
+            <!-- 이미지 파일명: thai.png -->
+            <div class="seller-card">
+                <img src="thai.png" alt="Thailand">
+            </div>
+            
+            <!-- 이미지 파일명: indonesia.png -->
+            <div class="seller-card">
+                <img src="indonesia.png" alt="Indonesia">
+            </div>
+            
+            <!-- 이미지 파일명: Vietnam.png -->
+            <div class="seller-card">
+                <img src="Vietnam.png" alt="Vietnam">
+            </div>
+            
+            <!-- 이미지 파일명: korea.png -->
+            <div class="seller-card">
+                <img src="korea.png" alt="Korea">
+            </div>
+            
+            <!-- 이미지 파일명: USA.png -->
+            <div class="seller-card">
+                <img src="USA.png" alt="USA">
+            </div>
+        </div>
+    </section>
+
+    <!-- Prize Section -->
+    <section class="prize-section">
+        <div class="white-stripe top"></div>
+        <h2 class="prize-title">
+            WIN 350,000 USD
+        </h2>
+        <p class="prize-text">
+            appear on a global OTT reality show.
+        </p>
+        <div class="white-stripe bottom"></div>
+    </section>
+
+    <!-- CTA Section (배경: sellerrace.png) -->
+    <section class="cta-section">
+        <h2 class="cta-title">
+            SELL THE MOST<br/>OWN THE SCREEN
+        </h2>
+        <p class="cta-text">
+            Become the legend seller everyone talks about.
+        </p>
+    </section>
+
+    <!-- Footer Section (배경: Startline.png) -->
+    <section class="footer-section">
+        <button class="join-button">JOIN THE RACE</button>
+        
+        <h2 class="footer-title">
+            SELLER<br/>RACE
+        </h2>
+        
+        <div class="footer-subtitle">
+            2026, The Race Starts
+        </div>
+    </section>
+
+    <!-- Checkered Footer -->
+    <div class="checkered-border"></div>
+
+    <!-- Three.js Globe Script -->
+    <script>
+        // 9개국 데이터
+        const countries = [
+            { name: 'China', city: 'SHANGHAI', angle: 0 },
+            { name: 'Singapore', city: 'SINGAPORE', angle: 40 },
+            { name: 'Japan', city: 'TOKYO', angle: 80 },
+            { name: 'Malaysia', city: 'KUALA LUMPUR', angle: 120 },
+            { name: 'Thailand', city: 'BANGKOK', angle: 160 },
+            { name: 'Indonesia', city: 'JAKARTA', angle: 200 },
+            { name: 'Vietnam', city: 'HO CHI MINH', angle: 240 },
+            { name: 'Korea', city: 'SEOUL', angle: 280 },
+            { name: 'USA', city: 'NEW YORK', angle: 320 }
+        ];
+        
+        // Three.js Setup
+        const globeContainer = document.getElementById('globeCanvas');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 2000);
+        camera.position.z = 400;
+        
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        // 모바일에서 더 크게 보이도록
+        const size = Math.min(window.innerWidth * 0.8, 600);
+        renderer.setSize(size, size);
+        renderer.setClearColor(0x000000, 0);
+        globeContainer.appendChild(renderer.domElement);
+        
+        // Create Dot Globe - 크기 증가
+        const geometry = new THREE.SphereGeometry(150, 55, 55);
+        const vertices = geometry.attributes.position.array;
+        const dotGeometry = new THREE.BufferGeometry();
+        const dotPositions = [];
+        
+        for (let i = 0; i < vertices.length; i += 3) {
+            dotPositions.push(vertices[i], vertices[i + 1], vertices[i + 2]);
+        }
+        
+        dotGeometry.setAttribute('position', new THREE.Float32BufferAttribute(dotPositions, 3));
+        
+        const dotMaterial = new THREE.PointsMaterial({
+            color: 0xff0000,
+            size: 2.5,
+            transparent: true,
+            opacity: 0.85
+        });
+        
+        const globe = new THREE.Points(dotGeometry, dotMaterial);
+        scene.add(globe);
+        
+        // Animation
+        function animate() {
+            requestAnimationFrame(animate);
+            globe.rotation.y += 0.002;
+            globe.rotation.x = Math.sin(Date.now() * 0.0001) * 0.1;
+            renderer.render(scene, camera);
+        }
+        
+        animate();
+        
+        // Create Floating Cities
+        const citiesContainer = document.getElementById('citiesContainer');
+        
+        countries.forEach((country, idx) => {
+            const angle = (country.angle * Math.PI) / 180;
+            const radiusPercent = 42; // 지구본에 훨씬 가까이 배치
+            const x = Math.cos(angle) * radiusPercent;
+            const y = Math.sin(angle) * radiusPercent;
+            
+            const cityDiv = document.createElement('div');
+            cityDiv.className = 'floating-city';
+            cityDiv.style.left = `calc(50% + ${x}%)`;
+            cityDiv.style.top = `calc(50% + ${y}%)`;
+            cityDiv.style.transform = 'translate(-50%, -50%)';
+            cityDiv.style.animationDelay = `${idx * 0.3}s, ${idx * 0.15}s`;
+            
+            cityDiv.innerHTML = `<div class="city-name">${country.city}</div>`;
+            
+            citiesContainer.appendChild(cityDiv);
+        });
+        
+        // Responsive Resize
+        window.addEventListener('resize', () => {
+            const newSize = Math.min(window.innerWidth * 0.8, 600);
+            renderer.setSize(newSize, newSize);
+        });
+    </script>
+</body>
+</html>
