@@ -195,24 +195,25 @@
             cursor: pointer;
             background: #fff;
             border: 4px solid #000;
-            transition: border-color 0.3s ease;
+            transition: border-color 0.3s ease, transform 0.3s ease;
         }
         
         .seller-card:hover {
             border-color: #ff0000;
+            transform: scale(1.02);
         }
         
         .seller-card img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            filter: grayscale(100%);
-            transition: filter 0.5s ease, transform 0.5s ease;
+            /* 처음부터 칼라로 표시 */
+            filter: grayscale(0%);
+            transition: transform 0.3s ease;
         }
         
         .seller-card:hover img {
-            filter: grayscale(0%);
-            transform: scale(1.08);
+            transform: scale(1.05);
         }
         
         /* Prize Section */
@@ -324,6 +325,76 @@
             font-weight: 300;
             letter-spacing: 4px;
             color: #fff;
+        }
+        
+        /* Popup Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90vh;
+            animation: zoomIn 0.3s ease;
+        }
+        
+        .modal-content img {
+            width: auto;
+            height: auto;
+            max-width: 100%;
+            max-height: 90vh;
+            object-fit: contain;
+            border: 5px solid #ff0000;
+            box-shadow: 0 0 50px rgba(255, 0, 0, 0.5);
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            background: #ff0000;
+            color: #fff;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 24px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .modal-close:hover {
+            transform: scale(1.1) rotate(90deg);
+        }
+        
+        @keyframes zoomIn {
+            from {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
         }
         
         /* Mobile Responsive */
@@ -516,6 +587,14 @@
     <!-- Checkered Footer -->
     <div class="checkered-border"></div>
 
+    <!-- Popup Modal -->
+    <div class="modal-overlay" id="imageModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">×</button>
+            <img id="modalImage" src="" alt="Seller">
+        </div>
+    </div>
+
     <!-- Three.js Globe Script -->
     <script>
         // 9개국 데이터 - 위치 조정
@@ -601,6 +680,46 @@
         window.addEventListener('resize', () => {
             const newSize = Math.min(window.innerWidth * 0.8, 600);
             renderer.setSize(newSize, newSize);
+        });
+        
+        // Popup Modal Functionality
+        function openModal(imageSrc) {
+            const modal = document.getElementById('imageModal');
+            const modalImage = document.getElementById('modalImage');
+            modalImage.src = imageSrc;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeModal() {
+            const modal = document.getElementById('imageModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Add click events to seller cards
+        document.addEventListener('DOMContentLoaded', function() {
+            const sellerCards = document.querySelectorAll('.seller-card');
+            sellerCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const img = this.querySelector('img');
+                    openModal(img.src);
+                });
+            });
+            
+            // Close modal when clicking overlay
+            document.getElementById('imageModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeModal();
+                }
+            });
+            
+            // Close modal with ESC key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeModal();
+                }
+            });
         });
     </script>
 </body>
